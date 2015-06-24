@@ -9,6 +9,6 @@
   "author": "Wai Lun Poon",
   "license": "MIT",
   "dependencies": {
-    "node-winkapi": "^0.1.2"
+    "request": "^2.58.0"
   }
 }
