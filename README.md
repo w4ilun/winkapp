@@ -27,3 +27,7 @@ winky.login(clientId,clientSecret,username,password,function(err,data){
   * Get devices
   * Set device state
   * TBD
+
+## License
+
+MIT
