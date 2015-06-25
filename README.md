@@ -5,7 +5,7 @@ Currently works with my GE Link starter kit (2 light bulbs and 1 hub)
 ## Setup
 
 ```js
-var winku = require('./Winky.js');
+var winky = require('./Winky.js');
 ```
 
 ## Features
