@@ -9,11 +9,14 @@ var Winky         = function(){
 
 Winky.prototype.login         = login;
 Winky.prototype.getDevices    = getDevices;
-Winky.prototype.setDevice     = setDevice;/*
-Winky.prototype.getGroups     = getGroups;
+Winky.prototype.setDevice     = setDevice;
+Winky.prototype.getScenes     = getScenes;
+Winky.prototype.setScene      = setScene;
+/*
 Winky.prototype.setGroup      = setGroup;
 Winky.prototype.getScenes     = getGroups;
-Winky.prototype.activateScene = setGroup;*/
+Winky.prototype.activateScene = setGroup;
+*/
 
 function login(clientId,clientSecret,username,password,cb){
 
@@ -67,9 +70,7 @@ function getDevices(cb){
       }
 
       self.devices = body.data.map(function(device){
-        var deviceType,deviceId;
-
-        switch(device.model_name){
+        /*switch(device.model_name){
           case 'Quirky Gateway':
             deviceId    = device.hub_id;
             deviceType  = 'hub';
@@ -81,12 +82,12 @@ function getDevices(cb){
           default:
             deviceId    = 'unknown';
             deviceType  = 'unknown';
-        }
+        }*/
 
         return {
-          id            : deviceId,
-          type          : deviceType,
-          desired_state : device.desired_state
+          uuid          : device.uuid,
+          modelName     : device.model_name,
+          desiredState  : device.desired_state
         }
       });
 
@@ -139,7 +140,57 @@ function setDevice(device,powered,brightness){
     }
   },function response(err, httpResponse, body){
     console.log(body);
-  })  
+  });
+
+}
+
+function getScenes(cb){
+
+  var self = this;
+
+  request({
+    url     : apiUrl+'/users/me/scenes',
+    method  : 'GET',
+    json    : true,
+    headers : {
+      'Authorization' : 'Bearer '+self.oauth2.access_token,
+      'Content-Type'  : 'application/json',
+    }
+  }, function response(err, httpResponse, body){
+
+      if(!!err){
+        cb(err,null);
+        return;
+      }
+
+      self.scenes = body.data.map(function(scene){
+        return {
+          id   : scene.scene_id,
+          name : scene.name
+        }
+      });
+
+      cb(null,self.scenes);
+
+  });
+}
+
+function setScene(scene){
+
+  var self = this;
+
+  request({
+    url     : apiUrl+'/scenes/'+scene.id+'/activate',
+    method  : 'POST',
+    json    : true,
+    headers : {
+      'Authorization' : 'Bearer ' + self.oauth2.access_token,
+      'Content-Type'  : 'application/json',
+    }
+  }, function response(err, httpResponse, body){
+    console.log(body);
+  });
+
 }
 
 module.exports = Winky;
